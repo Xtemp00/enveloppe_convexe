@@ -116,6 +116,7 @@ void vecset_sort(struct vecset *self, comp_func_t func,const void *ctx){
 
 }
 
+// Fonction qui empile un élément.
 void vecset_push(struct vecset *self, struct vec p){
     vecset_add(self, p);
 }
