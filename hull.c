@@ -23,7 +23,7 @@ double dot(const struct vec *v1, const struct vec *v2) {
 double cross(const struct vec *p1,const struct vec *p2, const struct vec *p3){
     return (p2->x - p1->x)*(p3->y - p1->y) - (p2->y - p1->y)*(p3->x - p1->x);
 }
-// il me casse les coilles a tout le temps parler
+
 bool is_left_turn(const struct vec *p1,const struct vec *p2, const struct vec *p3){
 
 }
