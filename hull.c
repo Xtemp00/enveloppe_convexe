@@ -11,7 +11,7 @@ struct vec {
 };
 
 
-// Fonction pour calculer la distance entre deux points
+// Fonction pour calculer le produit scalaire de deux vecteurs
 // Formule : (x1 * x2) + (y1 * y2)
 
 double dot(const struct vec *v1, const struct vec *v2) {
@@ -20,13 +20,15 @@ double dot(const struct vec *v1, const struct vec *v2) {
 
 // Fonction pour calculer la norme d'un vecteur
 // Formule : (x2 − x1)(y3 − y1) − (y2 − y1)(x3 − x1)
-
 double cross(const struct vec *p1,const struct vec *p2, const struct vec *p3){
     return (p2->x - p1->x)*(p3->y - p1->y) - (p2->y - p1->y)*(p3->x - p1->x);
 }
-// il me casse les coilles a tout le temps parler
-bool is_left_turn(const struct vec *p1,const struct vec *p2, const struct vec *p3){
 
+// Fonction qui regarde si la suite de point constitue un tournant a gauche
+// Formule : si le produit vectoriel est positif alors P3 est a gauche de P1P2
+// et negatif si a droite
+bool is_left_turn(const struct vec *p1,const struct vec *p2, const struct vec *p3){
+    return cross(p1,p2,p3) > 0;
 }
 
 struct vecset {
