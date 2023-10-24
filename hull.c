@@ -167,8 +167,15 @@ int main() {
         p.x = strtod(endptr, &endptr);
         p.y = strtod(endptr, &endptr);
 
-    // then do something with p
+        // then do something with p and test function
+        printf("%f %f\n", p.x, p.y);
+
+
     }
+
+
+
+
     return 0;
 }
 
