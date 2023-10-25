@@ -214,11 +214,17 @@ int main() {
     printf("\nSecond\n");
     printf("%f %f\n", vecset_second(self)->x, vecset_second(self)->y);
 
+    printf("\ndot\n");
+    printf("%f\n", dot(&self->data[0], &self->data[1]));
+
+    printf("\ncross\n");
+    printf("%f\n", cross(&self->data[0], &self->data[1], &self->data[2]));
+
+    printf("\nis_left_turn\n");
+    printf("%d\n", is_left_turn(&self->data[0], &self->data[1], &self->data[2]));
 
 
 
-
-    //printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
 
 
 
