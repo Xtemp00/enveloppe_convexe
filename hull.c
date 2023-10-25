@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <stddef.h>
 #define BUFSIZE 100
 
 // Structure du Vecteur
@@ -40,15 +39,15 @@ struct vecset {
 };
 
 void vecset_create(struct vecset *self){
-    self->capacity = 0;
+    self->capacity = 1;
     self->size = 0;
-    self->data = NULL;
+    self->data = malloc(self->capacity * sizeof(struct vec));
 }
 
 void vecset_destroy(struct vecset *self){
     free(self->data);
-    self->size = 0;
-    self->capacity = 0;
+    self->size = 1;
+    self->capacity = 1;
     self->data = NULL;
 }
 
@@ -60,8 +59,8 @@ void vecset_add(struct vecset *self, struct vec p){
         free(self->data);
         self->data = data2;
     }
-    self->data[self->size] = p;
     self->size = self->size + 1;
+    self->data[self->size - 1] = p;
 }
 
 //On considère une fonction de comparaison de points avec un contexte qui
@@ -84,24 +83,26 @@ int cmp1(const struct vec *p1,const struct vec *p2, const void *ctx){
 typedef int (*comp_func_t)(const struct vec *p1, const struct vec *p2, const void *ctx);
 
 const struct vec *vecset_max(const struct vecset *self, comp_func_t func, const void *ctx){
-    struct vec max = self->data[0];
-    for(int i = 0; i < self->size - 1; i ++){
-        if(func(&self->data[i], &self->data[i+1], ctx) > 0){
-            max = self->data[i];
+    int max_idx = 0;
+    for(int i = 1; i < self->size; i++) {
+        if(func(&self->data[max_idx], &self->data[i], ctx) < 0) {
+            max_idx = i;
         }
     }
+    return &self->data[max_idx];
 }
+
 
 //ode d’une fonction qui renvoie le minimum d’un
 //ensemble de points suivant une fonction de comparaison donnée
 const struct vec *vecset_min(const struct vecset *self,comp_func_t func, const void *ctx){
-    struct vec min = self->data[0];
-    for(int i = 0; i < self->size - 1; i ++){
-        if(func(&self->data[i], &self->data[i+1], ctx) < 0){
-            min = self->data[i];
+    int min_idx = 0;
+    for(int i = 1; i < self->size; i++) {
+        if(func(&self->data[min_idx], &self->data[i], ctx) > 0) {
+            min_idx = i;
         }
     }
-
+    return &self->data[min_idx];
 }
 
 
@@ -150,6 +151,7 @@ const struct vec *vecset_second(const struct vecset *self){
 
 
 void jarvis_march(const struct vecset *in, struct vecset *out){
+
 }
 
 
@@ -158,10 +160,14 @@ int main() {
     //setbuf(stdout, NULL); // avoid buffering in the output
 
     char buffer[BUFSIZE];
-
     fgets(buffer, BUFSIZE, stdin);
 
     size_t count = strtol(buffer, NULL, 10);
+
+    struct vecset *self = malloc(sizeof(struct vecset));
+    vecset_create(self);
+    printf("%d, %d\n", self->size, self->capacity);
+
 
     for (size_t i = 0; i < count; ++i) {
         struct vec p;
@@ -174,12 +180,53 @@ int main() {
 
         // then do something with p and test function
         printf("%f %f\n", p.x, p.y);
+        vecset_add(self, p);
+
+
     }
 
 
+    //test des fonction avec struct vec p
+    printf("\nMaximum\n");
+    printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
+
+    printf("\nMinimum\n");
+    printf("%f %f\n", vecset_min(self, cmp1, NULL)->x, vecset_min(self, cmp1, NULL)->y);
+
+    printf("\nTri\n");
+    vecset_sort(self, cmp1, NULL);
+    for(int i = 0; i < self->size; i++){
+        printf("%f %f\n", self->data[i].x, self->data[i].y);
+    }
+
+    printf("\nEmpile\n");
+    struct vec p;
+    p.x = 1;
+    p.y = 2;
+    vecset_push(self, p);
+
+    printf("\nDepile\n");
+    vecset_pop(self);
+
+    printf("\nTop\n");
+    printf("%f %f\n", vecset_top(self)->x, vecset_top(self)->y);
+
+    printf("\nSecond\n");
+    printf("%f %f\n", vecset_second(self)->x, vecset_second(self)->y);
+
+
+
+
+
+    //printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
+
+
+
+
+    vecset_destroy(self);
     return 0;
 }
 
 //Exemple execution
 //./hull < input.txt > output.txt 2>hull.log
-//./hull-viewer ./Hull <point.txt
+//chmod +x ./hull-generator
