@@ -83,26 +83,26 @@ int cmp1(const struct vec *p1,const struct vec *p2, const void *ctx){
 typedef int (*comp_func_t)(const struct vec *p1, const struct vec *p2, const void *ctx);
 
 const struct vec *vecset_max(const struct vecset *self, comp_func_t func, const void *ctx){
-    struct vec max = self->data[0];
-    for(int i = 0; i < self->size - 1; i ++){
-        if(func(&self->data[i], &self->data[i+1], ctx) > 0){
-            max = self->data[i];
+    int max_idx = 0;
+    for(int i = 1; i < self->size; i++) {
+        if(func(&self->data[max_idx], &self->data[i], ctx) < 0) {
+            max_idx = i;
         }
     }
-    return &max;
+    return &self->data[max_idx];
 }
+
 
 //ode d’une fonction qui renvoie le minimum d’un
 //ensemble de points suivant une fonction de comparaison donnée
 const struct vec *vecset_min(const struct vecset *self,comp_func_t func, const void *ctx){
-    struct vec min = self->data[0];
-    for(int i = 0; i < self->size - 1; i ++){
-        if(func(&self->data[i], &self->data[i+1], ctx) < 0){
-            min = self->data[i];
+    int min_idx = 0;
+    for(int i = 1; i < self->size; i++) {
+        if(func(&self->data[min_idx], &self->data[i], ctx) > 0) {
+            min_idx = i;
         }
     }
-    return &min;
-
+    return &self->data[min_idx];
 }
 
 
@@ -187,9 +187,9 @@ int main() {
 
 
     //test des fonction avec struct vec p
-    //printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
+    printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
 
-    //vecset_add(self, p);
+
 
 
     //printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
