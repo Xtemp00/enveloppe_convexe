@@ -68,15 +68,24 @@ void vecset_add(struct vecset *self, struct vec p){
 //strictement positif si p1 est «plus grand» que p2 et 0 si p1 est «égal» à p2.
 typedef int (*comp_func_t)(const struct vec *p1,const struct vec *p2, const void *ctx);
 
+//adapter la fonction pour que ctx soit un pointeur sur une fonction de comparaison
 int cmp1(const struct vec *p1,const struct vec *p2, const void *ctx){
-    if(p1->y < p2->y){
-        return -1;
-    }
     if(p1->y > p2->y){
         return 1;
     }
-    else {
-        return 0;
+    else if(p1->y < p2->y){
+        return -1;
+    }
+    else{
+        if(p1->x > p2->x){
+            return 1;
+        }
+        else if(p1->x < p2->x){
+            return -1;
+        }
+        else{
+            return 0;
+        }
     }
 }
 
@@ -155,6 +164,48 @@ void jarvis_march(const struct vecset *in, struct vecset *out){
 }
 
 
+// Graham's scan algorithm
+void graham_scan(const struct vecset *in, struct vecset *out) {
+    // Initialize out
+    vecset_create(out);
+
+    // Ensure there are at least 3 points to process
+    if(in->size < 3) {
+        // Here you can choose to copy the input points to out or return an error
+        // For this example, I'll just return
+        return;
+    }
+
+    // Find the lowest point B
+    const struct vec *B = vecset_min(in, cmp1, NULL);
+
+    // Sort all points based on polar angle with B
+    vecset_sort(in, cmp1, B);
+
+    // Push B and next two points into out
+    vecset_push(out, *B);
+    vecset_push(out, in->data[0]);
+    vecset_push(out, in->data[1]);
+
+    // Examine remaining points
+    for(int i = 2; i < in->size; ++i) {
+        const struct vec *I = &in->data[i];
+
+        const struct vec *T = vecset_top(out);
+        const struct vec *S = vecset_second(out);
+
+        // Ensure it makes a left turn. If not, pop from out and check again.
+        while(out->size >= 2 && !is_left_turn(S, T, I)) {
+            vecset_pop(out);
+            T = vecset_top(out);
+            S = vecset_second(out);
+        }
+
+        vecset_push(out, *I);
+    }
+}
+
+
 
 int main() {
     //setbuf(stdout, NULL); // avoid buffering in the output
@@ -166,7 +217,7 @@ int main() {
 
     struct vecset *self = malloc(sizeof(struct vecset));
     vecset_create(self);
-    printf("%d, %d\n", self->size, self->capacity);
+    //printf("%d, %d\n", self->size, self->capacity);
 
 
     for (size_t i = 0; i < count; ++i) {
@@ -179,13 +230,13 @@ int main() {
         p.y = strtod(endptr, &endptr);
 
         // then do something with p and test function
-        printf("%f %f\n", p.x, p.y);
+        //printf("%f %f\n", p.x, p.y);
         vecset_add(self, p);
 
 
     }
 
-
+/*
     //test des fonction avec struct vec p
     printf("\nMaximum\n");
     printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
@@ -222,6 +273,19 @@ int main() {
 
     printf("\nis_left_turn\n");
     printf("%d\n", is_left_turn(&self->data[0], &self->data[1], &self->data[2]));
+
+    printf("\nJarvis\n");
+
+*/
+    //printf("\nGraham\n");
+    struct vecset *out = malloc(sizeof(struct vecset));
+    graham_scan(self, out);
+    printf("%d\n", out->size);
+    for(int i = 0; i < out->size; i++){
+        printf("%f %f\n", out->data[i].x, out->data[i].y);
+    }
+
+
 
 
 
