@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #define BUFSIZE 100
 
 // Structure du Vecteur
@@ -38,24 +39,27 @@ struct vecset {
 };
 
 void vecset_create(struct vecset *self){
-    self->capacity = 0;
+    self->capacity = 1;
     self->size = 0;
-    self->data = NULL;
+    self->data = malloc(self->capacity * sizeof(struct vec));
 }
 
 void vecset_destroy(struct vecset *self){
     free(self->data);
-    self->size = 0;
-    self->capacity = 0;
+    self->size = 1;
+    self->capacity = 1;
     self->data = NULL;
 }
 
 void vecset_add(struct vecset *self, struct vec p){
-    self->size = self->size + 1;
     if(self->size >= self->capacity) {
-        self->data = realloc(self->data, self->capacity * 2 * sizeof(struct vec));
         self->capacity = self->capacity * 2;
+        struct vec *data2 = malloc(self->capacity * sizeof(struct vec));
+        data2 = memcpy(data2, self->data, self->size * sizeof(struct vec));
+        free(self->data);
+        self->data = data2;
     }
+    self->size = self->size + 1;
     self->data[self->size - 1] = p;
 }
 
@@ -85,6 +89,7 @@ const struct vec *vecset_max(const struct vecset *self, comp_func_t func, const 
             max = self->data[i];
         }
     }
+    return &max;
 }
 
 //ode d’une fonction qui renvoie le minimum d’un
@@ -96,6 +101,7 @@ const struct vec *vecset_min(const struct vecset *self,comp_func_t func, const v
             min = self->data[i];
         }
     }
+    return &min;
 
 }
 
@@ -158,6 +164,11 @@ int main() {
 
     size_t count = strtol(buffer, NULL, 10);
 
+    struct vecset *self = malloc(sizeof(struct vecset));
+    vecset_create(self);
+    printf("%d, %d\n", self->size, self->capacity);
+
+
     for (size_t i = 0; i < count; ++i) {
         struct vec p;
 
@@ -169,15 +180,27 @@ int main() {
 
         // then do something with p and test function
         printf("%f %f\n", p.x, p.y);
+        vecset_add(self, p);
 
 
     }
 
 
+    //test des fonction avec struct vec p
+    //printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
+
+    //vecset_add(self, p);
 
 
+    //printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
+
+
+
+
+    vecset_destroy(self);
     return 0;
 }
 
 //Exemple execution
 //./hull < input.txt > output.txt 2>hull.log
+//chmod +x ./hull-generator
