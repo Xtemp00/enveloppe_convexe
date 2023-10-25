@@ -1,0 +1,50 @@
+Index: hull.c
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#include <stdio.h>\n#include <math.h>\n#include <stdlib.h>\n#include <stdbool.h>\n#define BUFSIZE 100\n\n// Structure du Vecteur\nstruct vec {\n    double x;\n    double y;\n};\n\n\n// Fonction pour calculer le produit scalaire de deux vecteurs\n// Formule : (x1 * x2) + (y1 * y2)\n\ndouble dot(const struct vec *v1, const struct vec *v2) {\n    return v1->x * v2->x + v1->y * v2->y;\n}\n\n// Fonction pour calculer la norme d'un vecteur\n// Formule : (x2 − x1)(y3 − y1) − (y2 − y1)(x3 − x1)\ndouble cross(const struct vec *p1,const struct vec *p2, const struct vec *p3){\n    return (p2->x - p1->x)*(p3->y - p1->y) - (p2->y - p1->y)*(p3->x - p1->x);\n}\n\n// Fonction qui regarde si la suite de point constitue un tournant a gauche\n// Formule : si le produit vectoriel est positif alors P3 est a gauche de P1P2\n// et negatif si a droite\nbool is_left_turn(const struct vec *p1,const struct vec *p2, const struct vec *p3){\n    return cross(p1,p2,p3) > 0;\n}\n\nstruct vecset {\n    struct vec *data;\n    size_t size;\n    size_t capacity;\n};\n\nvoid vecset_create(struct vecset *self){\n    self->capacity = 0;\n    self->size = 0;\n    self->data = NULL;\n}\n\nvoid vecset_destroy(struct vecset *self){\n    free(self->data);\n    self->size = 0;\n    self->capacity = 0;\n    self->data = NULL;\n}\n\nvoid vecset_add(struct vecset *self, struct vec p){\n    self->size = self->size + 1;\n    if(self->size >= self->capacity) {\n        self->data = realloc(self->data, self->capacity * 2 * sizeof(struct vec));\n        self->capacity = self->capacity * 2;\n    }\n    self->data[self->size - 1] = p;\n}\n\n//On considère une fonction de comparaison de points avec un contexte qui\n//renvoie un entier strictement négatif si p1 est «plus petit» que p2, un entier\n//strictement positif si p1 est «plus grand» que p2 et 0 si p1 est «égal» à p2.\ntypedef int (*comp_func_t)(const struct vec *p1,const struct vec *p2, const void *ctx);\n\nint cmp1(const struct vec *p1,const struct vec *p2, const void *ctx){\n    if(p1->y < p2->y){\n        return -1;\n    }\n    if(p1->y > p2->y){\n        return 1;\n    }\n    else {\n        return 0;\n    }\n}\n\ntypedef int (*comp_func_t)(const struct vec *p1, const struct vec *p2, const void *ctx);\n\nconst struct vec *vecset_max(const struct vecset *self, comp_func_t func, const void *ctx){\n    struct vec max = self->data[0];\n    for(int i = 0; i < self->size - 1; i ++){\n        if(func(&self->data[i], &self->data[i+1], ctx) > 0){\n            max = self->data[i];\n        }\n    }\n}\n\n//ode d’une fonction qui renvoie le minimum d’un\n//ensemble de points suivant une fonction de comparaison donnée\nconst struct vec *vecset_min(const struct vecset *self,comp_func_t func, const void *ctx){\n    struct vec min = self->data[0];\n    for(int i = 0; i < self->size - 1; i ++){\n        if(func(&self->data[i], &self->data[i+1], ctx) < 0){\n            min = self->data[i];\n        }\n    }\n\n}\n\n\n// Donner le code d’une fonction qui trie l’ensemble de points\n//suivant la fonction de comparaison donnée\n//tri par selection mais on peut faire mieux ( a faire plus tard)\nvoid vecset_sort(struct vecset *self, comp_func_t func,const void *ctx){\n    for(int i = 0; i < self->size - 1; i ++){\n        for(int j = i + 1; j < self->size; j ++){\n            if(func(&self->data[i], &self->data[j], ctx) > 0){\n                struct vec temp = self->data[i];\n                self->data[i] = self->data[j];\n                self->data[j] = temp;\n            }\n        }\n    }\n\n}\n\nvoid vecset_push(struct vecset *self, struct vec p){\n    \n}\n\nvoid vecset_pop(struct vecset *self){\n\n}\n\n\nint main() {\n    //setbuf(stdout, NULL); // avoid buffering in the output\n\n    char buffer[BUFSIZE];\n    fgets(buffer, BUFSIZE, stdin);\n\n    size_t count = strtol(buffer, NULL, 10);\n\n    for (size_t i = 0; i < count; ++i) {\n        struct vec p;\n\n        fgets(buffer, BUFSIZE, stdin);\n\n        char *endptr = buffer;\n        p.x = strtod(endptr, &endptr);\n        p.y = strtod(endptr, &endptr);\n\n    // then do something with p\n    }\n    return 0;\n}\n\n//Exemple execution\n//./hull < input.txt > output.txt 2>hull.log
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/hull.c b/hull.c
+--- a/hull.c	(revision cb26ad9f46f971438974c8e5e7cd7d2a7b5a2707)
++++ b/hull.c	(date 1698146573751)
+@@ -117,13 +117,30 @@
+ }
+ 
+ void vecset_push(struct vecset *self, struct vec p){
++    self->size = self->size + 1;
++    if(self->size >= self->capacity) {
++        self->data = realloc(self->data, self->capacity * 2 * sizeof(struct vec));
++        self->capacity = self->capacity * 2;
++    }
++    self->data[self->size - 1] = p;
+     
+ }
+ 
+ void vecset_pop(struct vecset *self){
++    self->size = self->size - 1;
++    if(self->size <= self->capacity/4) {
++        self->data = realloc(self->data, self->capacity / 2 * sizeof(struct vec));
++        self->capacity = self->capacity / 2;
++    }
+ 
+ }
+ 
++// On Affiche les points
++void vecset_print(const struct vecset *self){
++    for(int i = 0; i < self->size; i ++){
++        printf("%f %f\n", self->data[i].x, self->data[i].y);
++    }
++}
+ 
+ int main() {
+     //setbuf(stdout, NULL); // avoid buffering in the output
+@@ -143,6 +160,8 @@
+         p.y = strtod(endptr, &endptr);
+ 
+     // then do something with p
++    // On affiche les points
++
+     }
+     return 0;
+ }

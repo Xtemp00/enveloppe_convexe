@@ -1,0 +1,12 @@
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+--- /dev/null	(date 1698146331679)
++++ b/.gitignore	(date 1698146331679)
+@@ -0,0 +1,2 @@
++/output.txt
++/Hull
