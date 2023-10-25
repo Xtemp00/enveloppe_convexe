@@ -187,7 +187,33 @@ int main() {
 
 
     //test des fonction avec struct vec p
+    printf("\nMaximum\n");
     printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
+
+    printf("\nMinimum\n");
+    printf("%f %f\n", vecset_min(self, cmp1, NULL)->x, vecset_min(self, cmp1, NULL)->y);
+
+    printf("\nTri\n");
+    vecset_sort(self, cmp1, NULL);
+    for(int i = 0; i < self->size; i++){
+        printf("%f %f\n", self->data[i].x, self->data[i].y);
+    }
+
+    printf("\nEmpile\n");
+    struct vec p;
+    p.x = 1;
+    p.y = 2;
+    vecset_push(self, p);
+
+    printf("\nDepile\n");
+    vecset_pop(self);
+
+    printf("\nTop\n");
+    printf("%f %f\n", vecset_top(self)->x, vecset_top(self)->y);
+
+    printf("\nSecond\n");
+    printf("%f %f\n", vecset_second(self)->x, vecset_second(self)->y);
+
 
 
 
