@@ -116,13 +116,38 @@ void vecset_sort(struct vecset *self, comp_func_t func,const void *ctx){
 
 }
 
+// Fonction qui empile un élément.
 void vecset_push(struct vecset *self, struct vec p){
-    
+    vecset_add(self, p);
 }
 
+//fonction qui dépile un élément.
 void vecset_pop(struct vecset *self){
+    self->size = self->size - 1;
+    if(self->size <= self->capacity/4) {
+        self->data = realloc(self->data, self->capacity / 2 * sizeof(struct vec));
+        self->capacity = self->capacity / 2;
+    }
 
 }
+
+//code d’une fonction qui renvoie le premier élément
+//de la pile.
+const struct vec *vecset_top(const struct vecset *self){
+    return &self->data[self->size - 1];
+}
+
+//code d’une fonction qui renvoie le second élément
+//de la pile.
+const struct vec *vecset_second(const struct vecset *self){
+    return &self->data[self->size - 2];
+}
+
+
+void jarvis_march(const struct vecset *in, struct vecset *out){
+
+}
+
 
 
 int main() {
@@ -142,8 +167,15 @@ int main() {
         p.x = strtod(endptr, &endptr);
         p.y = strtod(endptr, &endptr);
 
-    // then do something with p
+        // then do something with p and test function
+        printf("%f %f\n", p.x, p.y);
+
+
     }
+
+
+
+
     return 0;
 }
 
