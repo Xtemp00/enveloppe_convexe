@@ -2,6 +2,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <stddef.h>
 #define BUFSIZE 100
 
 // Structure du Vecteur
@@ -51,12 +53,15 @@ void vecset_destroy(struct vecset *self){
 }
 
 void vecset_add(struct vecset *self, struct vec p){
-    self->size = self->size + 1;
     if(self->size >= self->capacity) {
-        self->data = realloc(self->data, self->capacity * 2 * sizeof(struct vec));
         self->capacity = self->capacity * 2;
+        struct vec *data2 = malloc(self->capacity * sizeof(struct vec));
+        data2 = memcpy(data2, self->data, self->size * sizeof(struct vec));
+        free(self->data);
+        self->data = data2;
     }
-    self->data[self->size - 1] = p;
+    self->data[self->size] = p;
+    self->size = self->size + 1;
 }
 
 //On considère une fonction de comparaison de points avec un contexte qui
@@ -145,7 +150,6 @@ const struct vec *vecset_second(const struct vecset *self){
 
 
 void jarvis_march(const struct vecset *in, struct vecset *out){
-
 }
 
 
@@ -154,6 +158,7 @@ int main() {
     //setbuf(stdout, NULL); // avoid buffering in the output
 
     char buffer[BUFSIZE];
+
     fgets(buffer, BUFSIZE, stdin);
 
     size_t count = strtol(buffer, NULL, 10);
@@ -169,11 +174,7 @@ int main() {
 
         // then do something with p and test function
         printf("%f %f\n", p.x, p.y);
-
-
     }
-
-
 
 
     return 0;
@@ -181,3 +182,4 @@ int main() {
 
 //Exemple execution
 //./hull < input.txt > output.txt 2>hull.log
+//./hull-viewer ./Hull <point.txt
