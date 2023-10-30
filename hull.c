@@ -59,8 +59,8 @@ void vecset_add(struct vecset *self, struct vec p){
         free(self->data);
         self->data = data2;
     }
+    self->data[self->size] = p;
     self->size = self->size + 1;
-    self->data[self->size - 1] = p;
 }
 
 //On considère une fonction de comparaison de points avec un contexte qui
@@ -68,24 +68,15 @@ void vecset_add(struct vecset *self, struct vec p){
 //strictement positif si p1 est «plus grand» que p2 et 0 si p1 est «égal» à p2.
 typedef int (*comp_func_t)(const struct vec *p1,const struct vec *p2, const void *ctx);
 
-//adapter la fonction pour que ctx soit un pointeur sur une fonction de comparaison
 int cmp1(const struct vec *p1,const struct vec *p2, const void *ctx){
+    if(p1->y < p2->y){
+        return -1;
+    }
     if(p1->y > p2->y){
         return 1;
     }
-    else if(p1->y < p2->y){
-        return -1;
-    }
-    else{
-        if(p1->x > p2->x){
-            return 1;
-        }
-        else if(p1->x < p2->x){
-            return -1;
-        }
-        else{
-            return 0;
-        }
+    else {
+        return 0;
     }
 }
 
@@ -158,53 +149,51 @@ const struct vec *vecset_second(const struct vecset *self){
     return &self->data[self->size - 2];
 }
 
-
-void jarvis_march(const struct vecset *in, struct vecset *out){
-
-}
-
-
-// Graham's scan algorithm
-void graham_scan(const struct vecset *in, struct vecset *out) {
-    // Initialize out
-    vecset_create(out);
-
-    // Ensure there are at least 3 points to process
-    if(in->size < 3) {
-        // Here you can choose to copy the input points to out or return an error
-        // For this example, I'll just return
-        return;
-    }
-
-    // Find the lowest point B
-    const struct vec *B = vecset_min(in, cmp1, NULL);
-
-    // Sort all points based on polar angle with B
-    vecset_sort(in, cmp1, B);
-
-    // Push B and next two points into out
-    vecset_push(out, *B);
-    vecset_push(out, in->data[0]);
-    vecset_push(out, in->data[1]);
-
-    // Examine remaining points
-    for(int i = 2; i < in->size; ++i) {
-        const struct vec *I = &in->data[i];
-
-        const struct vec *T = vecset_top(out);
-        const struct vec *S = vecset_second(out);
-
-        // Ensure it makes a left turn. If not, pop from out and check again.
-        while(out->size >= 2 && !is_left_turn(S, T, I)) {
-            vecset_pop(out);
-            T = vecset_top(out);
-            S = vecset_second(out);
+//function JarvisMarch(S)
+//R←∅
+//F ← leftmost point in S
+//C←F
+//repeat
+//R ← R ∪ {C}
+//N ← a point in S
+//for all I ∈ S do
+//if (C, I, N ) is a left turn then
+//N ←I
+//end if
+//end for
+//C←N
+//until F = C
+//return R
+//end function
+//Marche de Jarvis
+void jarvis_march(const struct vecset *in, struct vecset *out) {
+    // On commence par trouver le point le plus a gauche
+    const struct vec *F = vecset_min(in, cmp1, NULL);
+    // On l'ajoute a l'enveloppe convexe
+    vecset_add(out, *F);
+    // On initialise le point courant
+    const struct vec *C = F;
+    // On initialise le point suivant
+    const struct vec *N = NULL;
+    // On initialise le point suivant
+    do {
+        N = &in->data[0];
+        // On parcourt tous les points
+        for(int i = 1; i < in->size; i++){
+            // Si le point est a gauche du point courant
+            if(is_left_turn(C, N, &in->data[i])){
+                // On le met dans le point suivant
+                N = &in->data[i];
+            }
         }
-
-        vecset_push(out, *I);
-    }
+        // On ajoute le point suivant a l'enveloppe convexe
+        vecset_add(out, *N);
+        // On met le point suivant dans le point courant
+        C = N;
+    } while (C != F);
+    // il manque le dernier point
+    vecset_pop(out);
 }
-
 
 
 int main() {
@@ -236,7 +225,7 @@ int main() {
 
     }
 
-/*
+    /*
     //test des fonction avec struct vec p
     printf("\nMaximum\n");
     printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
@@ -273,24 +262,18 @@ int main() {
 
     printf("\nis_left_turn\n");
     printf("%d\n", is_left_turn(&self->data[0], &self->data[1], &self->data[2]));
+    */
 
-    printf("\nJarvis\n");
-
-*/
-    //printf("\nGraham\n");
+    //test de jarvis march
     struct vecset *out = malloc(sizeof(struct vecset));
-    graham_scan(self, out);
-    printf("%d\n", out->size);
+    vecset_create(out);
+    jarvis_march(self, out);
+    // On Affiche la taille en début de fichier
+    printf("%li\n", out->size);
+    // On print les points de l'enveloppe convexe
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
     }
-
-
-
-
-
-
-
 
 
     vecset_destroy(self);
