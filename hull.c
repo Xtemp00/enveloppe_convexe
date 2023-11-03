@@ -196,6 +196,72 @@ void jarvis_march(const struct vecset *in, struct vecset *out) {
 }
 
 
+//function QuickHull(S)
+//A ← leftmost point in S
+//B ← rightmost point in S
+//S1 ← ∅
+//S2 ← ∅
+//for all I ∈ S \ {A, B} do
+//−−→
+//if I is on the left of AB then
+//S1 ← S1 ∪ {I}
+//else
+//S2 ← S2 ∪ {I}
+//end if
+//end for
+//R1 ← FindHull(S1 , A, B)
+//R2 ← FindHull(S2 , B, A)
+//return {A} ∪ R1 ∪ {B} ∪ R2
+//end function
+
+void quickhull(const struct vecset *in, struct vecset *out){
+    const struct vec *A = vecset_min(in, cmp1, NULL);
+    const struct vec *B = vecset_max(in, cmp1, NULL);
+
+    const struct vecset *S1 = NULL;
+    vecset_create(S1);
+
+    const struct vecset *S2 = NULL;
+    vecset_create(S2);
+
+    for(int i = 0; i < in->size; i++){
+        if(is_left_turn(A, B, &in->data[i])){
+            vecset_add(S1, in->data[i]);
+        }
+        else{
+            vecset_add(S2, in->data[i]);
+        }
+    }
+
+
+}
+
+
+//function FindHull(S, X, Y )
+//if S = ∅ then
+//return ∅
+//end if
+//M ← farthest point from line (XY )
+//S1 ← ∅
+//S2 ← ∅
+//for all I ∈ S \ {M } do
+//−−→
+//if I in on the left of XM then
+//S1 ← S1 ∪ {I}
+//end if
+//−−→
+//if I in on the left of M Y then
+//S2 ← S2 ∪ {I}
+//end if
+//end for
+//R1 ← FindHull(S1 , X, M )
+//R2 ← FindHull(S2 , M, Y )
+//return R1 ∪ {M } ∪ R2
+//end function
+
+
+
+
 int main() {
     //setbuf(stdout, NULL); // avoid buffering in the output
 
@@ -264,10 +330,24 @@ int main() {
     printf("%d\n", is_left_turn(&self->data[0], &self->data[1], &self->data[2]));
     */
 
-    //test de jarvis march
+    /*test de jarvis march
     struct vecset *out = malloc(sizeof(struct vecset));
     vecset_create(out);
     jarvis_march(self, out);
+    // On Affiche la taille en début de fichier
+    printf("%li\n", out->size);
+    // On print les points de l'enveloppe convexe
+    for(int i = 0; i < out->size; i++){
+        printf("%f %f\n", out->data[i].x, out->data[i].y);
+    }
+
+    */
+    //Quick Hull
+
+    //test de jarvis march
+    struct vecset *out = malloc(sizeof(struct vecset));
+    vecset_create(out);
+    quickhull(self, out);
     // On Affiche la taille en début de fichier
     printf("%li\n", out->size);
     // On print les points de l'enveloppe convexe
