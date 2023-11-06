@@ -196,6 +196,68 @@ void jarvis_march(const struct vecset *in, struct vecset *out) {
 }
 
 
+
+// Algorithm 2 Parcours de Graham
+// function (S)
+// B ← lowest point in S
+// Sort(S)
+// F ← first point in S
+// Push(R, B)
+// Push(R, F )
+// for all I ∈ S \ {B, F } do
+// T ← top point of R
+// S ← second point of R
+// while |R| ≥ 2 and (S, T, I) is a left turn do
+// Pop(R)
+// end while
+// Push(R, I)
+// end for
+// return R
+// end function
+
+// Fonction de comparaison utilisant atan2
+int cmp_angle(const void *a, const void *b) {
+    const struct vec *p1 = (const struct vec *)a;
+    const struct vec *p2 = (const struct vec *)b;
+    double angle1 = atan2(p1->y - ref_point.y, p1->x - ref_point.x);
+    double angle2 = atan2(p2->y - ref_point.y, p2->x - ref_point.x);
+
+    if (angle1 < angle2) return -1;
+    if (angle1 > angle2) return 1;
+
+    // Si les angles sont égaux, le point le plus proche de ref_point devrait venir en premier
+    double distance1 = (p1->x - ref_point.x) * (p1->x - ref_point.x) + (p1->y - ref_point.y) * (p1->y - ref_point.y);
+    double distance2 = (p2->x - ref_point.x) * (p2->x - ref_point.x) + (p2->y - ref_point.y) * (p2->y - ref_point.y);
+
+    return (distance1 > distance2) ? -1 : (distance1 < distance2);
+}
+
+// Graham Scan
+void graham_scan(const struct vecset *in, struct vecset *out) {
+    // Trouver le point avec l'ordonnée la plus basse et le mettre en tant que ref_point.
+    ref_point = *vecset_min(in, (comp_func_t)cmp1, NULL);
+
+    // Trier les points par angle polaire par rapport à 'ref_point'.
+    qsort(in->data, in->size, sizeof(struct vec), cmp_angle);
+
+    // Initialiser la pile 'out' avec le point le plus bas.
+    vecset_push(out, ref_point);
+
+    // Parcourir les points triés et construire l'enveloppe convexe.
+    for (size_t i = 1; i < in->size; ++i) {
+        // Gardez un œil sur le sommet actuel de la pile.
+        while (out->size >= 2 && !is_left_turn(vecset_second(out), vecset_top(out), &in->data[i])) {
+            // Si ce n'est pas un tournant à gauche, retirez le point du sommet.
+            vecset_pop(out);
+        }
+
+        // Ajoutez le prochain point à la pile.
+        vecset_push(out, in->data[i]);
+    }
+}
+
+
+
 //function QuickHull(S)
 //A ← leftmost point in S
 //B ← rightmost point in S
@@ -330,7 +392,7 @@ int main() {
     printf("%d\n", is_left_turn(&self->data[0], &self->data[1], &self->data[2]));
     */
 
-    /*test de jarvis march
+    /*//test de jarvis march
     struct vecset *out = malloc(sizeof(struct vecset));
     vecset_create(out);
     jarvis_march(self, out);
@@ -339,11 +401,23 @@ int main() {
     // On print les points de l'enveloppe convexe
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
+    }*/
+
+
+    //test de graham
+    struct vecset *out = malloc(sizeof(struct vecset));
+    vecset_create(out);
+    graham_scan(self, out);
+    // On Affiche la taille en début de fichier
+    printf("%li\n", out->size);
+    // On print les points de l'enveloppe convexe
+    for(int i = 0; i < out->size; i++){
+        printf("%f %f\n", out->data[i].x, out->data[i].y);
     }
 
-    */
-    //Quick Hull
 
+    //Quick Hull
+/*
     //test de jarvis march
     struct vecset *out = malloc(sizeof(struct vecset));
     vecset_create(out);
@@ -353,7 +427,7 @@ int main() {
     // On print les points de l'enveloppe convexe
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
-    }
+    }*/
 
 
     vecset_destroy(self);
