@@ -149,6 +149,19 @@ const struct vec *vecset_second(const struct vecset *self){
     return &self->data[self->size - 2];
 }
 
+//farthest point from line (XY )
+
+void farthest_point(const struct vecset *in, struct vec *out, const struct vec *X, const struct vec *Y){
+    double max = 0;
+    for(int i = 0; i < in->size; i++){
+        double distance = fabs(cross(X, Y, &in->data[i]));
+        if(distance > max){
+            max = distance;
+            *out = in->data[i];
+        }
+    }
+}
+
 //function JarvisMarch(S)
 //R←∅
 //F ← leftmost point in S
@@ -214,7 +227,7 @@ void jarvis_march(const struct vecset *in, struct vecset *out) {
 // end for
 // return R
 // end function
-
+/*
 // Fonction de comparaison utilisant atan2
 int cmp_angle(const void *a, const void *b) {
     const struct vec *p1 = (const struct vec *)a;
@@ -256,47 +269,7 @@ void graham_scan(const struct vecset *in, struct vecset *out) {
     }
 }
 
-
-
-//function QuickHull(S)
-//A ← leftmost point in S
-//B ← rightmost point in S
-//S1 ← ∅
-//S2 ← ∅
-//for all I ∈ S \ {A, B} do
-//−−→
-//if I is on the left of AB then
-//S1 ← S1 ∪ {I}
-//else
-//S2 ← S2 ∪ {I}
-//end if
-//end for
-//R1 ← FindHull(S1 , A, B)
-//R2 ← FindHull(S2 , B, A)
-//return {A} ∪ R1 ∪ {B} ∪ R2
-//end function
-
-void quickhull(const struct vecset *in, struct vecset *out){
-    const struct vec *A = vecset_min(in, cmp1, NULL);
-    const struct vec *B = vecset_max(in, cmp1, NULL);
-
-    const struct vecset *S1 = NULL;
-    vecset_create(S1);
-
-    const struct vecset *S2 = NULL;
-    vecset_create(S2);
-
-    for(int i = 0; i < in->size; i++){
-        if(is_left_turn(A, B, &in->data[i])){
-            vecset_add(S1, in->data[i]);
-        }
-        else{
-            vecset_add(S2, in->data[i]);
-        }
-    }
-
-
-}
+*/
 
 
 //function FindHull(S, X, Y )
@@ -320,6 +293,115 @@ void quickhull(const struct vecset *in, struct vecset *out){
 //R2 ← FindHull(S2 , M, Y )
 //return R1 ∪ {M } ∪ R2
 //end function
+
+void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, const struct vec *Y){
+    if(in->size == 0){
+        return;
+    }
+    const struct vec *M = malloc(sizeof(struct vec));
+    farthest_point(in, M, X, Y);
+
+    struct vecset *S1 = malloc(sizeof(struct vecset));
+    vecset_create(S1);
+
+
+    struct vecset *S2 = malloc(sizeof(struct vecset));
+    vecset_create(S2);
+
+    for(int i = 0; i < in->size; i++){
+        if((is_left_turn(X, M, &in->data[i])) && (&in->data[i] != M)){
+            vecset_add(S1, in->data[i]);
+        }
+        if((is_left_turn(M, Y, &in->data[i])) && (&in->data[i] != M)){
+            vecset_add(S2, in->data[i]);
+        }
+    }
+
+    struct vecset *R1 = malloc(sizeof(struct vecset));
+    vecset_create(R1);
+
+    struct vecset *R2 = malloc(sizeof(struct vecset));
+    vecset_create(R2);
+
+    FindHull(S1, R1, X, M);
+    FindHull(S2, R2, M, Y);
+
+    for(int i = 0; i < R1->size; i++){
+        vecset_add(out, R1->data[i]);
+    }
+    vecset_add(out, *M);
+    for(int i = 0; i < R2->size; i++){
+        vecset_add(out, R2->data[i]);
+    }
+
+    free(S1);
+    free(S2);
+    free(R1);
+    free(R2);
+
+}
+
+//function QuickHull(S)
+//A ← leftmost point in S
+//B ← rightmost point in S
+//S1 ← ∅
+//S2 ← ∅
+//for all I ∈ S \ {A, B} do
+//−−→
+//if I is on the left of AB then
+//S1 ← S1 ∪ {I}
+//else
+//S2 ← S2 ∪ {I}
+//end if
+//end for
+//R1 ← FindHull(S1 , A, B)
+//R2 ← FindHull(S2 , B, A)
+//return {A} ∪ R1 ∪ {B} ∪ R2
+//end function
+
+void quickhull(const struct vecset *in, struct vecset *out){
+    // On commence par trouver le point le plus a gauche
+    const struct vec *A = vecset_min(in, cmp1, NULL);
+    // On trouve le point le plus a droite
+    const struct vec *B = vecset_max(in, cmp1, NULL);
+    struct vecset *S1 = malloc(sizeof(struct vecset));
+    vecset_create(S1);
+
+    struct vecset *S2 = malloc(sizeof(struct vecset));
+    vecset_create(S2);
+
+    for(int i = 0; i < in->size; i++){
+        if(is_left_turn(A, B, &in->data[i]) && (&in->data[i] != A) && (&in->data[i] != B)){
+            vecset_add(S1, in->data[i]);
+        }
+        else{
+            vecset_add(S2, in->data[i] );
+        }
+    }
+
+    struct vecset *R1 = malloc(sizeof(struct vecset));
+    vecset_create(R1);
+
+    struct vecset *R2 = malloc(sizeof(struct vecset));
+    vecset_create(R2);
+
+    FindHull(S1, R1, A, B);
+    FindHull(S2, R2, B, A);
+    vecset_add(out, *A);
+    for(int i = 0; i < R1->size; i++){
+        vecset_add(out, R1->data[i]);
+    }
+    vecset_add(out, *B);
+    for(int i = 0; i < R2->size; i++){
+        vecset_add(out, R2->data[i]);
+    }
+
+    free(S1);
+    free(S2);
+    free(R1);
+    free(R2);
+
+}
 
 
 
@@ -390,9 +472,9 @@ int main() {
 
     printf("\nis_left_turn\n");
     printf("%d\n", is_left_turn(&self->data[0], &self->data[1], &self->data[2]));
-    */
 
-    /*//test de jarvis march
+
+    //test de jarvis march
     struct vecset *out = malloc(sizeof(struct vecset));
     vecset_create(out);
     jarvis_march(self, out);
@@ -401,7 +483,7 @@ int main() {
     // On print les points de l'enveloppe convexe
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
-    }*/
+    }
 
 
     //test de graham
@@ -414,10 +496,10 @@ int main() {
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
     }
-
+    */
 
     //Quick Hull
-/*
+
     //test de jarvis march
     struct vecset *out = malloc(sizeof(struct vecset));
     vecset_create(out);
@@ -427,7 +509,7 @@ int main() {
     // On print les points de l'enveloppe convexe
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
-    }*/
+    }
 
 
     vecset_destroy(self);

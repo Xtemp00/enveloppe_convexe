@@ -13,6 +13,8 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Hull" beforeDir="false" afterPath="$PROJECT_DIR$/Hull" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hull.c" beforeDir="false" afterPath="$PROJECT_DIR$/hull.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/points.log" beforeDir="false" afterPath="$PROJECT_DIR$/points.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,6 +116,12 @@
       <workItem from="1698762442467" duration="2543000" />
       <workItem from="1698765437184" duration="92000" />
       <workItem from="1698765715721" duration="55000" />
+      <workItem from="1699013515816" duration="14000" />
+      <workItem from="1699013565678" duration="47000" />
+      <workItem from="1699346586172" duration="1565000" />
+      <workItem from="1699348162623" duration="1373000" />
+      <workItem from="1699349546739" duration="308000" />
+      <workItem from="1699349864380" duration="67000" />
     </task>
     <task id="LOCAL-00001" summary="Ajout du Sujet">
       <option name="closed" value="true" />
@@ -139,7 +147,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698680906544</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Ajout de l'algo de Jarvis">
+      <option name="closed" value="true" />
+      <created>1699013523142</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1699013523142</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
