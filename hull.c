@@ -227,20 +227,20 @@ void jarvis_march(const struct vecset *in, struct vecset *out) {
 // end for
 // return R
 // end function
-/*
+
 // Fonction de comparaison utilisant atan2
-int cmp_angle(const void *a, const void *b) {
+int cmp_angle(const void *a, const void *b, struct vec *ref_point) {
     const struct vec *p1 = (const struct vec *)a;
     const struct vec *p2 = (const struct vec *)b;
-    double angle1 = atan2(p1->y - ref_point.y, p1->x - ref_point.x);
-    double angle2 = atan2(p2->y - ref_point.y, p2->x - ref_point.x);
+    double angle1 = atan2(p1->y - ref_point->y, p1->x - ref_point->x);
+    double angle2 = atan2(p2->y - ref_point->y, p2->x - ref_point->x);
 
     if (angle1 < angle2) return -1;
     if (angle1 > angle2) return 1;
 
     // Si les angles sont égaux, le point le plus proche de ref_point devrait venir en premier
-    double distance1 = (p1->x - ref_point.x) * (p1->x - ref_point.x) + (p1->y - ref_point.y) * (p1->y - ref_point.y);
-    double distance2 = (p2->x - ref_point.x) * (p2->x - ref_point.x) + (p2->y - ref_point.y) * (p2->y - ref_point.y);
+    double distance1 = (p1->x - ref_point->x) * (p1->x - ref_point->x) + (p1->y - ref_point->y) * (p1->y - ref_point->y);
+    double distance2 = (p2->x - ref_point->x) * (p2->x - ref_point->x) + (p2->y - ref_point->y) * (p2->y - ref_point->y);
 
     return (distance1 > distance2) ? -1 : (distance1 < distance2);
 }
@@ -248,10 +248,10 @@ int cmp_angle(const void *a, const void *b) {
 // Graham Scan
 void graham_scan(const struct vecset *in, struct vecset *out) {
     // Trouver le point avec l'ordonnée la plus basse et le mettre en tant que ref_point.
-    ref_point = *vecset_min(in, (comp_func_t)cmp1, NULL);
+    struct vec ref_point = *vecset_min(in, (comp_func_t)cmp1, NULL);
 
-    // Trier les points par angle polaire par rapport à 'ref_point'.
-    qsort(in->data, in->size, sizeof(struct vec), cmp_angle);
+    // Trier les points par angle par rapport à ref_point.
+    vecset_sort(in, (comp_func_t)cmp_angle, &ref_point);
 
     // Initialiser la pile 'out' avec le point le plus bas.
     vecset_push(out, ref_point);
@@ -269,7 +269,6 @@ void graham_scan(const struct vecset *in, struct vecset *out) {
     }
 }
 
-*/
 
 
 //function FindHull(S, X, Y )
@@ -293,7 +292,7 @@ void graham_scan(const struct vecset *in, struct vecset *out) {
 //R2 ← FindHull(S2 , M, Y )
 //return R1 ∪ {M } ∪ R2
 //end function
-
+/*
 void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, const struct vec *Y){
     if(in->size == 0){
         return;
@@ -402,6 +401,7 @@ void quickhull(const struct vecset *in, struct vecset *out){
     free(R2);
 
 }
+*/
 
 
 
@@ -485,7 +485,7 @@ int main() {
         printf("%f %f\n", out->data[i].x, out->data[i].y);
     }
 
-
+    */
     //test de graham
     struct vecset *out = malloc(sizeof(struct vecset));
     vecset_create(out);
@@ -496,9 +496,9 @@ int main() {
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
     }
-    */
 
-    //Quick Hull
+
+    /*//Quick Hull
 
     //test de jarvis march
     struct vecset *out = malloc(sizeof(struct vecset));
@@ -510,7 +510,8 @@ int main() {
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
     }
-
+    */
+    free(out);
 
     vecset_destroy(self);
     return 0;
