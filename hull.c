@@ -509,8 +509,6 @@ void quickhull(const struct vecset *in, struct vecset *out){
 }
 
 
-
-
 int main() {
     //setbuf(stdout, NULL); // avoid buffering in the output
 
@@ -521,7 +519,6 @@ int main() {
 
     struct vecset *self = malloc(sizeof(struct vecset));
     vecset_create(self);
-
 
     for (size_t i = 0; i < count; ++i) {
         struct vec p;
@@ -536,87 +533,70 @@ int main() {
 
     }
 
+    struct vecset *out = malloc(sizeof(struct vecset));
+    vecset_create(out);
+
+    //jarvis_march(self,out); a revoir
+    //graham_scan(self,out);
+    quickhull(self,out);
+
+    printf("%li\n", out->size);
+    for(int i = 0; i < out->size; i++) {
+        printf("%f %f\n", out->data[i].x, out->data[i].y);
+    }
+
     /*
-    //test des fonction avec struct vec p
+    // Test des Fonctions
+
+    // Chercher le Maximun
     printf("\nMaximum\n");
     printf("%f %f\n", vecset_max(self, cmp1, NULL)->x, vecset_max(self, cmp1, NULL)->y);
 
+    // Chercher le Minimun
     printf("\nMinimum\n");
     printf("%f %f\n", vecset_min(self, cmp1, NULL)->x, vecset_min(self, cmp1, NULL)->y);
 
+    // Tri (QuickSort)
     printf("\nTri\n");
     vecset_sort(self, cmp1, NULL);
     for(int i = 0; i < self->size; i++){
         printf("%f %f\n", self->data[i].x, self->data[i].y);
     }
 
+    // Empilement
     printf("\nEmpile\n");
     struct vec p;
     p.x = 1;
     p.y = 2;
     vecset_push(self, p);
 
+    // Depilement
     printf("\nDepile\n");
     vecset_pop(self);
 
+    // Retourn le Haut de la Pile
     printf("\nTop\n");
     printf("%f %f\n", vecset_top(self)->x, vecset_top(self)->y);
 
+    // Retourne le Second de la Pile
     printf("\nSecond\n");
     printf("%f %f\n", vecset_second(self)->x, vecset_second(self)->y);
 
+    // Calcul du Prdouits Scalaires
     printf("\ndot\n");
     printf("%f\n", dot(&self->data[0], &self->data[1]));
 
+    // Calcul de la normes
     printf("\ncross\n");
     printf("%f\n", cross(&self->data[0], &self->data[1], &self->data[2]));
 
+    // Donne le point le plus à gauche
     printf("\nis_left_turn\n");
     printf("%d\n", is_left_turn(&self->data[0], &self->data[1], &self->data[2]));
+    */
 
-
-    //test de jarvis march
-    struct vecset *out = malloc(sizeof(struct vecset));
-    vecset_create(out);
-    jarvis_march(self, out);
-    // On Affiche la taille en début de fichier
-    printf("%li\n", out->size);
-    // On print les points de l'enveloppe convexe
-    for(int i = 0; i < out->size; i++){
-        printf("%f %f\n", out->data[i].x, out->data[i].y);
-    }*/
-
-
-    //test de graham
-    struct vecset *out = malloc(sizeof(struct vecset));
-    vecset_create(out);
-    graham_scan(self, out);
-    // On Affiche la taille en début de fichier
-    printf("%li\n", out->size);
-    // On print les points de l'enveloppe convexe
-    for(int i = 0; i < out->size; i++){
-        printf("%f %f\n", out->data[i].x, out->data[i].y);
-    }
-
-
-    //Quick Hull
-
-    //test de jarvis march
-    /*struct vecset *out = malloc(sizeof(struct vecset));
-    vecset_create(out);
-    quickhull(self, out);
-    // On Affiche la taille en début de fichier
-    printf("%li\n", out->size);
-    // On print les points de l'enveloppe convexe
-    for(int i = 0; i < out->size; i++){
-        printf("%f %f\n", out->data[i].x, out->data[i].y);
-    }*/
-
+    free(out);
 
     vecset_destroy(self);
     return 0;
 }
-
-//Exemple execution
-//./hull < input.txt > output.txt 2>hull.log
-//chmod +x ./hull-generator

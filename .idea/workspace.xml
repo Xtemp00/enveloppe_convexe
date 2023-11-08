@@ -10,9 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2b08d161-b206-4146-8cf2-1b102f6e813c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_25_10_23_13_17__Changes_.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hull" beforeDir="false" afterPath="$PROJECT_DIR$/Hull" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hull.c" beforeDir="false" afterPath="$PROJECT_DIR$/hull.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/points.log" beforeDir="false" afterPath="$PROJECT_DIR$/points.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
