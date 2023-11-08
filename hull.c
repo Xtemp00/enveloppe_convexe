@@ -1,3 +1,4 @@
+//Rondo Benjamin | Loureau Ryan
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -12,38 +13,58 @@ struct vec {
 };
 
 
-// Fonction pour calculer le produit scalaire de deux vecteurs
-// Formule : (x1 * x2) + (y1 * y2)
-
+/* Fonction qui calcule le produit scalaire de deux vecteurs
+ * @param v1 : le premier vecteur
+ * @param v2 : le deuxième vecteur
+ * @return le produit scalaire des deux vecteurs
+*/
 double dot(const struct vec *v1, const struct vec *v2) {
     return v1->x * v2->x + v1->y * v2->y;
 }
 
-// Fonction pour calculer la norme d'un vecteur
-// Formule : (x2 − x1)(y3 − y1) − (y2 − y1)(x3 − x1)
+
+/* Fonction qui calcule le produit vectoriel de deux vecteurs
+ * @param v1 : le premier vecteur
+ * @param v2 : le deuxième vecteur
+ * @return le produit vectoriel des deux vecteurs
+*/
 double cross(const struct vec *p1,const struct vec *p2, const struct vec *p3){
     return (p2->x - p1->x)*(p3->y - p1->y) - (p2->y - p1->y)*(p3->x - p1->x);
 }
 
-// Fonction qui regarde si la suite de point constitue un tournant a gauche
-// Formule : si le produit vectoriel est positif alors P3 est a gauche de P1P2
-// et negatif si a droite
+
+/* Fonction qui regarde si la suite de point constitue un tournant a gauche
+ * @param p1 : le premier point
+ * @param p2 : le deuxième point
+ * @param p3 : le troisième point
+ * @return true si le produit vectoriel est positif, false sinon
+*/
 bool is_left_turn(const struct vec *p1,const struct vec *p2, const struct vec *p3){
     return cross(p1,p2,p3) > 0;
 }
 
+
+// Structure de l'ensemble de points
 struct vecset {
     struct vec *data;
     size_t size;
     size_t capacity;
 };
 
+
+/* Fonction qui crée un ensemble de points
+ * @param self : l'ensemble de points
+*/
 void vecset_create(struct vecset *self){
     self->capacity = 1;
     self->size = 0;
     self->data = malloc(self->capacity * sizeof(struct vec));
 }
 
+
+/* Fonction qui détruit un ensemble de points
+ * @param self : l'ensemble de points
+*/
 void vecset_destroy(struct vecset *self){
     free(self->data);
     self->size = 1;
@@ -51,6 +72,11 @@ void vecset_destroy(struct vecset *self){
     self->data = NULL;
 }
 
+
+/* Fonction qui ajoute un point à un ensemble de points
+ * @param self : l'ensemble de points
+ * @param p : le point à ajouter
+*/
 void vecset_add(struct vecset *self, struct vec p){
     if(self->size >= self->capacity) {
         self->capacity = self->capacity * 2;
@@ -63,11 +89,15 @@ void vecset_add(struct vecset *self, struct vec p){
     self->size = self->size + 1;
 }
 
-//On considère une fonction de comparaison de points avec un contexte qui
-//renvoie un entier strictement négatif si p1 est «plus petit» que p2, un entier
-//strictement positif si p1 est «plus grand» que p2 et 0 si p1 est «égal» à p2.
+
 typedef int (*comp_func_t)(const struct vec *p1,const struct vec *p2, const void *ctx);
 
+/* Fonction qui compare deux points suivant leur abscisse
+ * @param p1 : le premier point
+ * @param p2 : le deuxième point
+ * @param ctx : le contexte
+ * @return -1 si p1 est plus petit que p2, 1 si p1 est plus grand que p2, 0 sinon
+*/
 int cmp1(const struct vec *p1,const struct vec *p2, const void *ctx){
     if(p1->y < p2->y){
         return -1;
@@ -80,8 +110,14 @@ int cmp1(const struct vec *p1,const struct vec *p2, const void *ctx){
     }
 }
 
-typedef int (*comp_func_t)(const struct vec *p1, const struct vec *p2, const void *ctx);
 
+typedef int (*comp_func_t)(const struct vec *p1, const struct vec *p2, const void *ctx);
+/* Fonction qui renvoie le point le plus grand d'un ensemble de points
+ * @param self : l'ensemble de points
+ * @param func : la fonction de comparaison
+ * @param ctx : le contexte
+ * @return le point le plus grand
+*/
 const struct vec *vecset_max(const struct vecset *self, comp_func_t func, const void *ctx){
     int max_idx = 0;
     for(int i = 1; i < self->size; i++) {
@@ -93,8 +129,13 @@ const struct vec *vecset_max(const struct vecset *self, comp_func_t func, const 
 }
 
 
-//ode d’une fonction qui renvoie le minimum d’un
-//ensemble de points suivant une fonction de comparaison donnée
+
+/* Fonction qui renvoie le point le plus petit d'un ensemble de points
+ * @param self : l'ensemble de points
+ * @param func : la fonction de comparaison
+ * @param ctx : le contexte
+ * @return le point le plus petit
+*/
 const struct vec *vecset_min(const struct vecset *self,comp_func_t func, const void *ctx){
     int min_idx = 0;
     for(int i = 1; i < self->size; i++) {
@@ -106,28 +147,59 @@ const struct vec *vecset_min(const struct vecset *self,comp_func_t func, const v
 }
 
 
-// Donner le code d’une fonction qui trie l’ensemble de points
-//suivant la fonction de comparaison donnée
-//tri par selection mais on peut faire mieux ( a faire plus tard)
-void vecset_sort(struct vecset *self, comp_func_t func,const void *ctx){
-    for(int i = 0; i < self->size - 1; i ++){
-        for(int j = i + 1; j < self->size; j ++){
-            if(func(&self->data[i], &self->data[j], ctx) > 0){
-                struct vec temp = self->data[i];
-                self->data[i] = self->data[j];
-                self->data[j] = temp;
-            }
+/* Fonction qui trie un ensemble de points suivant la fonction de comparaison donnée
+ * @param self : l'ensemble de points
+ * @param func : la fonction de comparaison
+ * @param ctx : le contexte
+*/
+void vecset_sort(const struct vecset *self, comp_func_t func, const void *ctx){
+    if(self->size <= 1){
+        return;
+    }
+    struct vec pivot = self->data[0];
+    struct vecset *left = malloc(sizeof(struct vecset));
+    vecset_create(left);
+    struct vecset *right = malloc(sizeof(struct vecset));
+    vecset_create(right);
+    for(int i = 1; i < self->size; i++){
+        if(func(&self->data[i], &pivot, ctx) < 0){
+            vecset_add(left, self->data[i]);
+        }
+        else{
+            vecset_add(right, self->data[i]);
         }
     }
-
+    vecset_sort(left, func, ctx);
+    vecset_sort(right, func, ctx);
+    int i = 0;
+    for(int j = 0; j < left->size; j++){
+        self->data[i] = left->data[j];
+        i++;
+    }
+    self->data[i] = pivot;
+    i++;
+    for(int j = 0; j < right->size; j++){
+        self->data[i] = right->data[j];
+        i++;
+    }
+    free(left);
+    free(right);
 }
+// complexite de cette fonction : O(nlog(n))
 
-// Fonction qui empile un élément.
+
+/* Fonction qui empile un élément
+ * @param self : l'ensemble de points
+ * @param p : le point à empiler
+*/
 void vecset_push(struct vecset *self, struct vec p){
     vecset_add(self, p);
 }
 
-//fonction qui dépile un élément.
+
+/* Fonction qui dépile un élément
+ * @param self : l'ensemble de points
+*/
 void vecset_pop(struct vecset *self){
     self->size = self->size - 1;
     if(self->size <= self->capacity/4) {
@@ -137,20 +209,31 @@ void vecset_pop(struct vecset *self){
 
 }
 
-//code d’une fonction qui renvoie le premier élément
-//de la pile.
+
+/* Fonction qui renvoie le premier élément de la pile
+ * @param self : l'ensemble de points
+ * @return le premier élément de la pile
+*/
 const struct vec *vecset_top(const struct vecset *self){
     return &self->data[self->size - 1];
 }
 
-//code d’une fonction qui renvoie le second élément
-//de la pile.
+/* Fonction qui renvoie le second élément de la pile
+ * @param self : l'ensemble de points
+ * @return le second élément de la pile
+*/
 const struct vec *vecset_second(const struct vecset *self){
     return &self->data[self->size - 2];
 }
 
-//farthest point from line (XY )
 
+
+/* Fonction qui renvoie le point le plus éloigné de la droite XY
+ * @param in : l'ensemble de points
+ * @param out : l'ensemble de points
+ * @param X : le premier point de la droite
+ * @param Y : le deuxième point de la droite
+*/
 void farthest_point(const struct vecset *in, struct vec *out, const struct vec *X, const struct vec *Y){
     double max = 0;
     for(int i = 0; i < in->size; i++){
@@ -179,6 +262,10 @@ void farthest_point(const struct vecset *in, struct vec *out, const struct vec *
 //return R
 //end function
 //Marche de Jarvis
+/* Fonction qui calcule l'enveloppe convexe d'un ensemble de points
+ * @param in : l'ensemble de points
+ * @param out : l'ensemble de points
+*/
 void jarvis_march(const struct vecset *in, struct vecset *out) {
     // On commence par trouver le point le plus a gauche
     const struct vec *F = vecset_min(in, cmp1, NULL);
@@ -227,31 +314,40 @@ void jarvis_march(const struct vecset *in, struct vecset *out) {
 // end for
 // return R
 // end function
-/*
-// Fonction de comparaison utilisant atan2
-int cmp_angle(const void *a, const void *b) {
+
+/* Fonction qui compare deux points suivant leur angle polaire par rapport à un point de référence
+ * @param a : le premier point
+ * @param b : le deuxième point
+ * @param ref_point : le point de référence
+ * @return -1 si a est plus petit que b, 1 si a est plus grand que b, 0 sinon
+*/
+int cmp_angle(const void *a, const void *b, const void *ref_point) {
+    struct vec ref_point2 = *(struct vec *)ref_point;
     const struct vec *p1 = (const struct vec *)a;
     const struct vec *p2 = (const struct vec *)b;
-    double angle1 = atan2(p1->y - ref_point.y, p1->x - ref_point.x);
-    double angle2 = atan2(p2->y - ref_point.y, p2->x - ref_point.x);
+    double angle1 = atan2(p1->y - ref_point2.y, p1->x - ref_point2.x);
+    double angle2 = atan2(p2->y - ref_point2.y, p2->x - ref_point2.x);
 
     if (angle1 < angle2) return -1;
     if (angle1 > angle2) return 1;
 
     // Si les angles sont égaux, le point le plus proche de ref_point devrait venir en premier
-    double distance1 = (p1->x - ref_point.x) * (p1->x - ref_point.x) + (p1->y - ref_point.y) * (p1->y - ref_point.y);
-    double distance2 = (p2->x - ref_point.x) * (p2->x - ref_point.x) + (p2->y - ref_point.y) * (p2->y - ref_point.y);
+    double distance1 = (p1->x - ref_point2.x) * (p1->x - ref_point2.x) + (p1->y - ref_point2.y) * (p1->y - ref_point2.y);
+    double distance2 = (p2->x - ref_point2.x) * (p2->x - ref_point2.x) + (p2->y - ref_point2.y) * (p2->y - ref_point2.y);
 
     return (distance1 > distance2) ? -1 : (distance1 < distance2);
 }
 
-// Graham Scan
+/* Fonction qui calcule l'enveloppe convexe d'un ensemble de points
+ * @param in : l'ensemble de points
+ * @param out : l'ensemble de points
+*/
 void graham_scan(const struct vecset *in, struct vecset *out) {
     // Trouver le point avec l'ordonnée la plus basse et le mettre en tant que ref_point.
-    ref_point = *vecset_min(in, (comp_func_t)cmp1, NULL);
+    struct vec ref_point = *vecset_min(in, (comp_func_t)cmp1, NULL);
 
     // Trier les points par angle polaire par rapport à 'ref_point'.
-    qsort(in->data, in->size, sizeof(struct vec), cmp_angle);
+    vecset_sort(in, (comp_func_t)cmp_angle, &ref_point);
 
     // Initialiser la pile 'out' avec le point le plus bas.
     vecset_push(out, ref_point);
@@ -269,7 +365,7 @@ void graham_scan(const struct vecset *in, struct vecset *out) {
     }
 }
 
-*/
+
 
 
 //function FindHull(S, X, Y )
@@ -293,12 +389,18 @@ void graham_scan(const struct vecset *in, struct vecset *out) {
 //R2 ← FindHull(S2 , M, Y )
 //return R1 ∪ {M } ∪ R2
 //end function
-
+/* Fonction qui calcule l'enveloppe convexe d'un ensemble de points
+ * @param in : l'ensemble de points
+ * @param out : l'ensemble de points
+ * @param X : le premier point de la droite
+ * @param Y : le deuxième point de la droite
+*/
 void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, const struct vec *Y){
     if(in->size == 0){
         return;
     }
-    const struct vec *M = malloc(sizeof(struct vec));
+    struct vec *M = malloc(sizeof(struct vec));
+
     farthest_point(in, M, X, Y);
 
     struct vecset *S1 = malloc(sizeof(struct vecset));
@@ -358,7 +460,10 @@ void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, 
 //R2 ← FindHull(S2 , B, A)
 //return {A} ∪ R1 ∪ {B} ∪ R2
 //end function
-
+/* Fonction qui calcule l'enveloppe convexe d'un ensemble de points
+ * @param in : l'ensemble de points
+ * @param out : l'ensemble de points
+*/
 void quickhull(const struct vecset *in, struct vecset *out){
     // On commence par trouver le point le plus a gauche
     const struct vec *A = vecset_min(in, cmp1, NULL);
@@ -416,7 +521,6 @@ int main() {
 
     struct vecset *self = malloc(sizeof(struct vecset));
     vecset_create(self);
-    //printf("%d, %d\n", self->size, self->capacity);
 
 
     for (size_t i = 0; i < count; ++i) {
@@ -427,9 +531,6 @@ int main() {
         char *endptr = buffer;
         p.x = strtod(endptr, &endptr);
         p.y = strtod(endptr, &endptr);
-
-        // then do something with p and test function
-        //printf("%f %f\n", p.x, p.y);
         vecset_add(self, p);
 
 
@@ -483,7 +584,7 @@ int main() {
     // On print les points de l'enveloppe convexe
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
-    }
+    }*/
 
 
     //test de graham
@@ -496,12 +597,12 @@ int main() {
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
     }
-    */
+
 
     //Quick Hull
 
     //test de jarvis march
-    struct vecset *out = malloc(sizeof(struct vecset));
+    /*struct vecset *out = malloc(sizeof(struct vecset));
     vecset_create(out);
     quickhull(self, out);
     // On Affiche la taille en début de fichier
@@ -509,7 +610,7 @@ int main() {
     // On print les points de l'enveloppe convexe
     for(int i = 0; i < out->size; i++){
         printf("%f %f\n", out->data[i].x, out->data[i].y);
-    }
+    }*/
 
 
     vecset_destroy(self);
