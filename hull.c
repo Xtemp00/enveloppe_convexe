@@ -182,6 +182,8 @@ void vecset_sort(const struct vecset *self, comp_func_t func, const void *ctx){
         self->data[i] = right->data[j];
         i++;
     }
+    vecset_destroy(left);
+    vecset_destroy(right);
     free(left);
     free(right);
 }
@@ -235,6 +237,10 @@ const struct vec *vecset_second(const struct vecset *self){
  * @param Y : le deuxième point de la droite
 */
 void farthest_point(const struct vecset *in, struct vec *out, const struct vec *X, const struct vec *Y){
+    if (in->size == 0) {
+        return;
+    }
+    *out = in->data[0];
     double max = 0;
     for(int i = 0; i < in->size; i++){
         double distance = fabs(cross(X, Y, &in->data[i]));
@@ -269,19 +275,22 @@ void farthest_point(const struct vecset *in, struct vec *out, const struct vec *
 void jarvis_march(const struct vecset *in, struct vecset *out) {
     // On commence par trouver le point le plus a gauche
     const struct vec *F = vecset_min(in, cmp1, NULL);
-    // On l'ajoute a l'enveloppe convexe
-    vecset_add(out, *F);
+
     // On initialise le point courant
     const struct vec *C = F;
     // On initialise le point suivant
     const struct vec *N = NULL;
     // On initialise le point suivant
+    vecset_add(out, *C);
     do {
         N = &in->data[0];
+        if(N == C){
+            N = &in->data[1];
+        }
         // On parcourt tous les points
         for(int i = 1; i < in->size; i++){
             // Si le point est a gauche du point courant
-            if(is_left_turn(C, N, &in->data[i])){
+            if(is_left_turn(C, &in->data[i], N)){
                 // On le met dans le point suivant
                 N = &in->data[i];
             }
@@ -291,7 +300,7 @@ void jarvis_march(const struct vecset *in, struct vecset *out) {
         // On met le point suivant dans le point courant
         C = N;
     } while (C != F);
-    // il manque le dernier point
+    // Suppression des douvlons
     vecset_pop(out);
 }
 
@@ -396,7 +405,7 @@ void graham_scan(const struct vecset *in, struct vecset *out) {
  * @param Y : le deuxième point de la droite
 */
 void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, const struct vec *Y){
-    if(in->size == 0){
+    if(in->size == 0 ){
         return;
     }
     struct vec *M = malloc(sizeof(struct vec));
@@ -436,10 +445,16 @@ void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, 
         vecset_add(out, R2->data[i]);
     }
 
+    vecset_destroy(S1);
     free(S1);
+    vecset_destroy(S2);
     free(S2);
+    vecset_destroy(R1);
     free(R1);
+    vecset_destroy(R2);
     free(R2);
+    free(M);
+
 
 }
 
@@ -500,12 +515,14 @@ void quickhull(const struct vecset *in, struct vecset *out){
     for(int i = 0; i < R2->size; i++){
         vecset_add(out, R2->data[i]);
     }
-
+    vecset_destroy(S1);
     free(S1);
+    vecset_destroy(S2);
     free(S2);
+    vecset_destroy(R1);
     free(R1);
+    vecset_destroy(R2);
     free(R2);
-
 }
 
 
@@ -536,7 +553,7 @@ int main() {
     struct vecset *out = malloc(sizeof(struct vecset));
     vecset_create(out);
 
-    //jarvis_march(self,out); a revoir
+    //jarvis_march(self,out);
     //graham_scan(self,out);
     quickhull(self,out);
 
@@ -595,8 +612,10 @@ int main() {
     printf("%d\n", is_left_turn(&self->data[0], &self->data[1], &self->data[2]));
     */
 
+    vecset_destroy(out);
     free(out);
 
     vecset_destroy(self);
+    free(self);
     return 0;
 }

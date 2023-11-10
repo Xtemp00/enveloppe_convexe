@@ -10,6 +10,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2b08d161-b206-4146-8cf2-1b102f6e813c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Hull" beforeDir="false" afterPath="$PROJECT_DIR$/Hull" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/hull.c" beforeDir="false" afterPath="$PROJECT_DIR$/hull.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
@@ -80,6 +81,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.github.copilot.settings.ApplicationConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -123,6 +125,12 @@
       <workItem from="1699349864380" duration="67000" />
       <workItem from="1699357272758" duration="1801000" />
       <workItem from="1699446153117" duration="2734000" />
+      <workItem from="1699531568113" duration="24000" />
+      <workItem from="1699531616053" duration="883000" />
+      <workItem from="1699551344107" duration="92000" />
+      <workItem from="1699551483355" duration="2263000" />
+      <workItem from="1699600817257" duration="1066000" />
+      <workItem from="1699601894508" duration="474000" />
     </task>
     <task id="LOCAL-00001" summary="Ajout du Sujet">
       <option name="closed" value="true" />
@@ -156,7 +164,23 @@
       <option name="project" value="LOCAL" />
       <updated>1699013523142</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Update du Main">
+      <option name="closed" value="true" />
+      <created>1699449178377</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1699449178377</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Update du Main">
+      <option name="closed" value="true" />
+      <created>1699449240437</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1699449240437</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,6 +190,11 @@
     <MESSAGE value="Ajout du Sujet" />
     <MESSAGE value="Ajout de Hull generator et Hull viewer" />
     <MESSAGE value="Ajout de l'algo de Jarvis" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ajout de l'algo de Jarvis" />
+    <MESSAGE value="Update du Main" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update du Main" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
