@@ -252,23 +252,6 @@ void farthest_point(const struct vecset *in, struct vec *out, const struct vec *
     }
 }
 
-//function JarvisMarch(S)
-//R←∅
-//F ← leftmost point in S
-//C←F
-//repeat
-//R ← R ∪ {C}
-//N ← a point in S
-//for all I ∈ S do
-//if (C, I, N ) is a left turn then
-//N ←I
-//end if
-//end for
-//C←N
-//until F = C
-//return R
-//end function
-//Marche de Jarvis
 /* Fonction qui calcule l'enveloppe convexe d'un ensemble de points
  * @param in : l'ensemble de points
  * @param out : l'ensemble de points
@@ -301,29 +284,9 @@ void jarvis_march(const struct vecset *in, struct vecset *out) {
         // On met le point suivant dans le point courant
         C = N;
     } while (C != F);
-    // Suppression des douvlons
+    // Suppression des doublons
     vecset_pop(out);
 }
-
-
-
-// Algorithm 2 Parcours de Graham
-// function (S)
-// B ← lowest point in S
-// Sort(S)
-// F ← first point in S
-// Push(R, B)
-// Push(R, F )
-// for all I ∈ S \ {B, F } do
-// T ← top point of R
-// S ← second point of R
-// while |R| ≥ 2 and (S, T, I) is a left turn do
-// Pop(R)
-// end while
-// Push(R, I)
-// end for
-// return R
-// end function
 
 /* Fonction qui compare deux points suivant leur angle polaire par rapport à un point de référence
  * @param a : le premier point
@@ -375,30 +338,6 @@ void graham_scan(const struct vecset *in, struct vecset *out) {
     }
 }
 
-
-
-
-//function FindHull(S, X, Y )
-//if S = ∅ then
-//return ∅
-//end if
-//M ← farthest point from line (XY )
-//S1 ← ∅
-//S2 ← ∅
-//for all I ∈ S \ {M } do
-//−−→
-//if I in on the left of XM then
-//S1 ← S1 ∪ {I}
-//end if
-//−−→
-//if I in on the left of M Y then
-//S2 ← S2 ∪ {I}
-//end if
-//end for
-//R1 ← FindHull(S1 , X, M )
-//R2 ← FindHull(S2 , M, Y )
-//return R1 ∪ {M } ∪ R2
-//end function
 /* Fonction qui calcule l'enveloppe convexe d'un ensemble de points
  * @param in : l'ensemble de points
  * @param out : l'ensemble de points
@@ -461,23 +400,6 @@ void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, 
 
 }
 
-//function QuickHull(S)
-//A ← leftmost point in S
-//B ← rightmost point in S
-//S1 ← ∅
-//S2 ← ∅
-//for all I ∈ S \ {A, B} do
-//−−→
-//if I is on the left of AB then
-//S1 ← S1 ∪ {I}
-//else
-//S2 ← S2 ∪ {I}
-//end if
-//end for
-//R1 ← FindHull(S1 , A, B)
-//R2 ← FindHull(S2 , B, A)
-//return {A} ∪ R1 ∪ {B} ∪ R2
-//end function
 /* Fonction qui calcule l'enveloppe convexe d'un ensemble de points
  * @param in : l'ensemble de points
  * @param out : l'ensemble de points
