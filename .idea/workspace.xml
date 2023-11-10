@@ -130,7 +130,7 @@
       <workItem from="1699551344107" duration="92000" />
       <workItem from="1699551483355" duration="2263000" />
       <workItem from="1699600817257" duration="1066000" />
-      <workItem from="1699601894508" duration="474000" />
+      <workItem from="1699601894508" duration="2992000" />
     </task>
     <task id="LOCAL-00001" summary="Ajout du Sujet">
       <option name="closed" value="true" />
@@ -180,7 +180,15 @@
       <option name="project" value="LOCAL" />
       <updated>1699449240437</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Update de QuickHull">
+      <option name="closed" value="true" />
+      <created>1699602498199</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1699602498199</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -191,7 +199,8 @@
     <MESSAGE value="Ajout de Hull generator et Hull viewer" />
     <MESSAGE value="Ajout de l'algo de Jarvis" />
     <MESSAGE value="Update du Main" />
-    <option name="LAST_COMMIT_MESSAGE" value="Update du Main" />
+    <MESSAGE value="Update de QuickHull" />
+    <option name="LAST_COMMIT_MESSAGE" value="Update de QuickHull" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -237,11 +237,12 @@ const struct vec *vecset_second(const struct vecset *self){
  * @param Y : le deuxième point de la droite
 */
 void farthest_point(const struct vecset *in, struct vec *out, const struct vec *X, const struct vec *Y){
-    if (in->size == 0) {
+    if (in->size == 0){
         return;
     }
+    // out on selectionne le point le plus a gauche
     *out = in->data[0];
-    double max = 0;
+    double max = fabs(cross(X, Y, out));
     for(int i = 0; i < in->size; i++){
         double distance = fabs(cross(X, Y, &in->data[i]));
         if(distance > max){
@@ -405,7 +406,7 @@ void graham_scan(const struct vecset *in, struct vecset *out) {
  * @param Y : le deuxième point de la droite
 */
 void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, const struct vec *Y){
-    if(in->size == 0 ){
+    if(in->size == 0){
         return;
     }
     struct vec *M = malloc(sizeof(struct vec));
@@ -420,11 +421,13 @@ void FindHull(const struct vecset *in, struct vecset *out, const struct vec *X, 
     vecset_create(S2);
 
     for(int i = 0; i < in->size; i++){
-        if((is_left_turn(X, M, &in->data[i])) && (&in->data[i] != M)){
-            vecset_add(S1, in->data[i]);
-        }
-        if((is_left_turn(M, Y, &in->data[i])) && (&in->data[i] != M)){
-            vecset_add(S2, in->data[i]);
+        if(&in->data[i] != M) {
+            if (is_left_turn(X, M, &in->data[i])) {
+                vecset_add(S1, in->data[i]);
+            }
+            if (is_left_turn(M, Y, &in->data[i])) {
+                vecset_add(S2, in->data[i]);
+            }
         }
     }
 
@@ -491,11 +494,12 @@ void quickhull(const struct vecset *in, struct vecset *out){
     vecset_create(S2);
 
     for(int i = 0; i < in->size; i++){
-        if(is_left_turn(A, B, &in->data[i]) && (&in->data[i] != A) && (&in->data[i] != B)){
-            vecset_add(S1, in->data[i]);
-        }
-        else{
-            vecset_add(S2, in->data[i] );
+        if((&in->data[i] != A) && (&in->data[i] != B)){
+            if (is_left_turn(A, B, &in->data[i])) {
+                vecset_add(S1, in->data[i]);
+            } else {
+                vecset_add(S2, in->data[i]);
+            }
         }
     }
 
@@ -548,6 +552,10 @@ int main() {
         vecset_add(self, p);
 
 
+    }
+
+    if(self->size < 3){
+        return 0;
     }
 
     struct vecset *out = malloc(sizeof(struct vecset));
